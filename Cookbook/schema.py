@@ -1,20 +1,10 @@
 import graphene
-from graphene_django import DjangoObjectType
+import Cookbook.recipe.schemas.schemaIngredients as sch_Ingredient
+import Cookbook.recipe.schemas.schemaRecipe as sch_Recipe
 
-from Cookbook.recipe.models import Recipe, Ingredient
+class Query(sch_Ingredient.Query, sch_Recipe.Query, graphene.ObjectType):
+    pass
+class Mutation(sch_Ingredient.Mutation, sch_Recipe.Mutation, graphene.ObjectType):
+    pass
 
-class RecipeType():
-    class Meta:
-        model = Recipe
-
-class IngredientType():
-    class Meta:
-        model = Ingredient
-    
-class Query(graphene.ObjectType):
-    info = graphene.String()
-
-    def resolve_info(self, info , root):
-        return "Mostrant info"
-
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
