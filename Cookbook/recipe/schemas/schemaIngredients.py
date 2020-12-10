@@ -7,6 +7,10 @@ class IngredientType(DjangoObjectType):
     class Meta:
         model = Ingredient
 
+class IngredientInput(graphene.InputObjectType):
+    id = graphene.Int()
+    quantity = graphene.Float()
+
 class Query(graphene.ObjectType):
     all_ingredients = graphene.List(IngredientType)
 
