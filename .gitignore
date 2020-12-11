@@ -1,3 +1,4 @@
-/Cookbook/recipe/tests
-
+tests/
 db.sqlite3
+*.pyc
+__pycache__/
