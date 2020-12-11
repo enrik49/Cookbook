@@ -9,13 +9,19 @@ class RecipeType(DjangoObjectType):
     class Meta:
         model = Recipe
 
+class IngredientsRecipeType(DjangoObjectType):
+    class Meta:
+        model = IngredientsRecipe
+
+#------------------------------------Query's
+
 class Query(graphene.ObjectType):
     all_recipies = graphene.List(RecipeType)
 
     def resolve_all_recipies(self, info):
         return Recipe.objects.all()
 
-
+#------------------------------------Mutation's
 
 class CreateRecipe(graphene.Mutation):
     id = graphene.Int()
@@ -34,7 +40,7 @@ class CreateRecipe(graphene.Mutation):
         recipe.save()
 
         for obj_ingredient in ingredients:
-            ingredient = Ingredient.objects.filter(id=obj_ingredient.id).first()
+            ingredient = Ingredient.objects.get(id=obj_ingredient.id)
 
             ingredientsRecipe = IngredientsRecipe(
                 quantity= obj_ingredient.quantity, 
@@ -48,5 +54,31 @@ class CreateRecipe(graphene.Mutation):
             description = recipe.description,
             )
 
+class DeleteRecipe(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    class Arguments:
+        id_recipe = graphene.Int()
+    
+    def mutate(self, info, id_recipe):
+        recipe = Recipe.objects.get(id=id_recipe)
+        recipe.delete()
+        return DeleteRecipe(ok=True)
+
+class DeleteIngredientRecipe(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    class Arguments:
+        id_ingredient_recipe = graphene.Int()
+    
+    def mutate(self, info, id_ingredient_recipe):
+        ing_recipe = IngredientsRecipe.objects.get(id=id_ingredient_recipe)
+        ing_recipe.delete()
+        return DeleteIngredientRecipe(ok=True)
+
+        
 class Mutation(graphene.ObjectType):
     create_recipe = CreateRecipe.Field()
+
+    delete_recipe = DeleteRecipe.Field()
+    delete_recipe_ingredient = DeleteIngredientRecipe.Field()

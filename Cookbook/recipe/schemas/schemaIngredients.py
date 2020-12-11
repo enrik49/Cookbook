@@ -32,5 +32,19 @@ class CreateIngredient(graphene.Mutation):
             id = ingredient.id,
             name = ingredient.name)
 
+
+class DeleteIngredient(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    class Arguments:
+        id_ingredient = graphene.Int()
+    
+    def mutate(self, info, id_ingredient):
+        ingredient = Ingredient.objects.get(id=id_ingredient)
+        ingredient.delete()
+        return DeleteIngredient(ok=True)
+
 class Mutation(graphene.ObjectType):
     create_ingredient = CreateIngredient.Field()
+
+    delete_ingredient = DeleteIngredient.Field()
